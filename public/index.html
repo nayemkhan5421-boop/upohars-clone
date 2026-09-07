@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Smart Earning BD</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="profile">
+      <div class="logo-badge" id="avatar-badge">SE</div>
+      <img id="avatar" class="avatar hidden" src="" alt="" />
+      <div>
+        <div id="username" class="username">User</div>
+        <div class="status"><span class="dot"></span><span data-i18n="status_online">Online now</span></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="lang-toggle" class="badge" style="border:none;cursor:pointer;">EN</button>
+      <div class="balance-pill">💳 $<span id="balance">0.000</span></div>
+    </div>
+  </header>
+
+  <main id="view-home" class="view">
+    <div class="banner">
+      <h2 data-i18n="welcome_title">👋 Welcome</h2>
+      <p data-i18n="welcome_sub">Complete tasks to earn rewards.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="stat_total_earning">Total Earning</div>
+        <div class="stat-value blue" id="total-earning">$0.000</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-i18n="stat_referrals">Referrals</div>
+        <div class="stat-value green" id="referrals-count">0</div>
+      </div>
+    </div>
+    <div class="stat-card wide">
+      <div class="stat-label" data-i18n="stat_commission">Commission Earned</div>
+      <div class="stat-value purple" id="commission">$0.000</div>
+    </div>
+
+    <div class="stat-card wide">
+      <div class="progress-header">
+        <div>
+          <strong data-i18n="daily_progress">Daily Progress</strong>
+          <p id="daily-limit-text">You can complete 0 ads today</p>
+        </div>
+      </div>
+      <div class="progress-bar"><div id="daily-progress-fill" class="progress-fill"></div></div>
+      <div class="progress-footer">
+        <span id="daily-today">Today: 0/0</span>
+      </div>
+    </div>
+
+    <div class="stat-card wide">
+      <div class="refer-header">
+        <strong data-i18n="checkin_title">📅 Daily Check-in</strong>
+        <span id="checkin-streak-badge" class="badge">Streak: 0</span>
+      </div>
+      <p id="checkin-status" style="font-size:13px;color:#64748b;margin:6px 0 10px;"></p>
+      <button class="btn-primary" id="checkin-btn" data-i18n="checkin_btn">Claim Daily Bonus</button>
+    </div>
+
+    <div class="stat-card wide">
+      <div class="refer-header">
+        <strong data-i18n="spin_title">🎡 Daily Spin</strong>
+      </div>
+      <p id="spin-status" style="font-size:13px;color:#64748b;margin:6px 0 10px;"></p>
+      <button class="btn-primary" id="spin-btn" data-i18n="spin_btn">Spin Now</button>
+    </div>
+
+    <div class="stat-card wide">
+      <div class="refer-header">
+        <strong data-i18n="refer_earn">Refer &amp; Earn</strong>
+        <span id="refer-bonus-badge" class="badge">Earn $0/referral</span>
+      </div>
+      <div class="refer-line">🎁 Friends get $<span id="friend-bonus">0</span> bonus</div>
+      <div class="refer-line green">💰 You earn $<span id="referral-bonus">0</span> per referral</div>
+      <div class="refer-line" id="refer-requirement" style="font-size:12px;"></div>
+      <div class="refer-link" id="refer-link">https://t.me/...</div>
+      <button class="btn-primary" id="share-btn" data-i18n="share_btn">↗ Share</button>
+    </div>
+  </main>
+
+  <main id="view-tasks" class="view hidden">
+    <div id="tasks-list"></div>
+  </main>
+
+  <main id="view-leaderboard" class="view hidden">
+    <div class="stat-card wide">
+      <h3 data-i18n="leaderboard_title" style="margin-top:0;">🏆 Top Earners</h3>
+      <div id="leaderboard-list"></div>
+    </div>
+  </main>
+
+  <main id="view-support" class="view hidden">
+    <div class="support-card">
+      <div class="support-icon">🎧</div>
+      <h3 data-i18n="support_title">How Can I Help You?</h3>
+      <p data-i18n="support_sub">Contact support for any issues.</p>
+      <button class="btn-primary" id="contact-support-btn" data-i18n="support_btn">Contact Support</button>
+    </div>
+  </main>
+
+  <main id="view-withdraw" class="view hidden">
+    <div class="stat-card wide">
+      <h3 data-i18n="withdraw_title">Withdraw Funds</h3>
+      <div class="requirements-box">
+        <div class="req-title" data-i18n="withdraw_requirements">ⓘ Withdrawal Requirements</div>
+        <div class="req-line">
+          <span>Minimum <span id="req-min-balance">0.15</span> $ Balance</span>
+          <span id="req-balance-progress">0/0.15</span>
+        </div>
+        <div class="progress-bar small"><div id="req-balance-fill" class="progress-fill"></div></div>
+        <div class="req-line">
+          <span>Minimum <span id="req-min-referrals">2</span> Referrals</span>
+          <span id="req-referral-progress">0/2</span>
+        </div>
+        <div class="progress-bar small"><div id="req-referral-fill" class="progress-fill"></div></div>
+      </div>
+      <div id="req-warning" class="warning-box hidden"></div>
+
+      <label class="field-label" data-i18n="payment_method">Payment Method</label>
+      <select id="method-select" class="field-input">
+        <option value="Bkash">Bkash</option>
+        <option value="Nagad">Nagad</option>
+        <option value="Binance">Binance</option>
+        <option value="USDT (POL)">USDT (POL)</option>
+      </select>
+
+      <label class="field-label" data-i18n="account_info">Account Information</label>
+      <input id="account-input" class="field-input" placeholder="Enter your account number" />
+
+      <label class="field-label" data-i18n="amount_label">Amount ($)</label>
+      <input id="amount-input" class="field-input" type="number" step="0.001" placeholder="Min: 0.15" />
+
+      <button class="btn-primary" id="withdraw-submit" data-i18n="withdraw_submit_btn">Request Withdrawal</button>
+    </div>
+
+    <div class="stat-card wide">
+      <h3 data-i18n="withdraw_history">Withdrawal History</h3>
+      <div id="withdraw-history"></div>
+    </div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="home">🏠<span data-i18n="tab_home">HOME</span></button>
+    <button class="tab" data-view="tasks">◎<span data-i18n="tab_tasks">TASKS</span></button>
+    <button class="tab" data-view="leaderboard">🏆<span data-i18n="tab_leaderboard">TOP</span></button>
+    <button class="tab" data-view="support">🎧<span data-i18n="tab_support">SUPPORT</span></button>
+    <button class="tab" data-view="withdraw">💼<span data-i18n="tab_withdraw">WITHDRAW</span></button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
